@@ -4,4 +4,4 @@
 ### rpc.properties 配置ribbon eureka
 
 
-### ServiceFactory 生成Feign
+### ServiceFactory 生成Feign代理对象
