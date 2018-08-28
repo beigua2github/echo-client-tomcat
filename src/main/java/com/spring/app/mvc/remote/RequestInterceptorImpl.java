@@ -72,7 +72,7 @@ public class RequestInterceptorImpl implements RequestInterceptor {
     /**
      * 根据轮询策略选择一个地址
      *
-     * @param clientName 提供服务的服务名 例如：ZDM-FORTRESS-RPC ZDM-UFINA-WEB
+     * @param clientName 提供服务的服务名 例如：ECHO-SERVICE
      */
     private String selectOne(RequestTemplate input, String clientName) {
         try {
