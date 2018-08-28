@@ -10,7 +10,9 @@ import org.springframework.beans.factory.FactoryBean;
 
 
 /**
- * Created by beigua on 2018/8/27.
+ *
+ * @author beigua
+ * @date 2018/8/27
  */
 public class ServiceFactory<T> implements FactoryBean<T> {
     private String proxyInterfaceName;

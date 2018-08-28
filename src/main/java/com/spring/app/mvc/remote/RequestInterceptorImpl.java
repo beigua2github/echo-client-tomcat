@@ -1,5 +1,7 @@
 package com.spring.app.mvc.remote;
 
+import com.dianping.cat.Cat;
+import com.dianping.cat.message.Transaction;
 import com.netflix.client.ClientFactory;
 import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
 import com.netflix.loadbalancer.RoundRobinRule;
@@ -34,24 +36,24 @@ public class RequestInterceptorImpl implements RequestInterceptor {
     @Override
     public void apply(RequestTemplate template) {
         String host = this.url(template);
-//        Transaction t = Cat.newTransaction("Call", StringUtils.defaultIfBlank(realName, rpcName) + template.url());
-//        try {
-//            Cat.logEvent("Call.Method", template.method());
-//            RpcContext ctx = new RpcContext();
-//            Cat.logRemoteCallClient(ctx);
-//            for (Map.Entry<String, String> entry : ctx.getProperties().entrySet()) {
-//                template.header(entry.getKey(), entry.getValue());
-//            }
-//            template.header("X-CAT-TRACE-MODE", "true");
-//            template.header("X-CAT-ROOT-ID", ctx.getProperty(Cat.Context.ROOT));
-//            template.header("X-CAT-PARENT-ID", ctx.getProperty(Cat.Context.PARENT));
-//            template.header("X-CAT-ID", ctx.getProperty(Cat.Context.CHILD));
-//            Cat.logEvent("PigeonCall.app", realName);
-//        } catch (Exception e) {
-//            log.error("doGet error,url:" + this.url + ",errorMessage:" + e.getMessage(), e);
-//        } finally {
-////            CatRpcAop.RESOURCE.set(t);
-//        }
+        Transaction t = Cat.newTransaction("Call", StringUtils.defaultIfBlank(realName, rpcName) + template.url());
+        try {
+            Cat.logEvent("Call.Method", template.method());
+            RpcContext ctx = new RpcContext();
+            Cat.logRemoteCallClient(ctx);
+            for (Map.Entry<String, String> entry : ctx.getProperties().entrySet()) {
+                template.header(entry.getKey(), entry.getValue());
+            }
+            template.header("X-CAT-TRACE-MODE", "true");
+            template.header("X-CAT-ROOT-ID", ctx.getProperty(Cat.Context.ROOT));
+            template.header("X-CAT-PARENT-ID", ctx.getProperty(Cat.Context.PARENT));
+            template.header("X-CAT-ID", ctx.getProperty(Cat.Context.CHILD));
+            Cat.logEvent("PigeonCall.app", realName);
+        } catch (Exception e) {
+            log.error("doGet error,url:" + this.url + ",errorMessage:" + e.getMessage(), e);
+        } finally {
+//            CatRpcAop.RESOURCE.set(t);
+        }
         //设置请求的host
         template.header(HardCodedTarget.REQUEST_HOST, host);
         template.header(RPC_SERVER, rpcName);
@@ -109,19 +111,19 @@ public class RequestInterceptorImpl implements RequestInterceptor {
         return null;
     }
 
-//    class RpcContext implements Cat.Context {
-//        private Map<String, String> properties = new HashMap<String, String>();
-//        @Override
-//        public void addProperty(String key, String value) {
-//            properties.put(key, value);
-//        }
-//        @Override
-//        public String getProperty(String key) {
-//            return properties.get(key);
-//        }
-//        public final Map<String, String> getProperties() {
-//            return properties;
-//        }
-//    }
+    class RpcContext implements Cat.Context {
+        private Map<String, String> properties = new HashMap<String, String>();
+        @Override
+        public void addProperty(String key, String value) {
+            properties.put(key, value);
+        }
+        @Override
+        public String getProperty(String key) {
+            return properties.get(key);
+        }
+        public final Map<String, String> getProperties() {
+            return properties;
+        }
+    }
 
 }
