@@ -35,12 +35,11 @@ public class ServiceFactory<T> implements FactoryBean<T> {
 
     private String getServerName() {
         RpcServer rpcServer = proxyInterface.getAnnotation(RpcServer.class);
-
         return rpcServer.value();
     }
 
     @Override
-    public T getObject() throws Exception {
+    public T getObject() {
         return this.t;
     }
 

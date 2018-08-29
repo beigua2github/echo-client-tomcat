@@ -1,6 +1,7 @@
 package com.spring.app.mvc.remote;
 
 import com.dianping.cat.Cat;
+import com.dianping.cat.message.Message;
 import com.dianping.cat.message.Transaction;
 import com.netflix.client.ClientFactory;
 import com.netflix.loadbalancer.DynamicServerListLoadBalancer;
@@ -49,12 +50,15 @@ public class RequestInterceptorImpl implements RequestInterceptor {
             template.header("X-CAT-PARENT-ID", ctx.getProperty(Cat.Context.PARENT));
             template.header("X-CAT-ID", ctx.getProperty(Cat.Context.CHILD));
             Cat.logEvent("PigeonCall.app", realName);
+
+            t.setStatus(Message.SUCCESS);
         } catch (Exception e) {
+            t.setStatus(e);
             log.error("doGet error,url:" + this.url + ",errorMessage:" + e.getMessage(), e);
         } finally {
-//            CatRpcAop.RESOURCE.set(t);
+            t.complete();
         }
-        //设置请求的host
+
         template.header(HardCodedTarget.REQUEST_HOST, host);
         template.header(RPC_SERVER, rpcName);
     }
@@ -66,7 +70,7 @@ public class RequestInterceptorImpl implements RequestInterceptor {
             this.url = addr;
             return addr;
         } else {
-            log.error("Get Service Error!"+ rpcName + " get addr is null");
+            log.error("Get Service Error!" + rpcName + " get addr is null");
             return this.url;
         }
     }
@@ -106,21 +110,24 @@ public class RequestInterceptorImpl implements RequestInterceptor {
                 return new StringBuilder("http://").append(selected.getHost()).append(":").append(selected.getPort()).toString();
             }
         } catch (Exception e) {
-            log.error("Select Springcloud Server Error : {}", e);
+            log.error("Select SpringCloud Server Error : {}", e);
         }
         return null;
     }
 
     class RpcContext implements Cat.Context {
-        private Map<String, String> properties = new HashMap<String, String>();
+        private Map<String, String> properties = new HashMap<>();
+
         @Override
         public void addProperty(String key, String value) {
             properties.put(key, value);
         }
+
         @Override
         public String getProperty(String key) {
             return properties.get(key);
         }
+
         public final Map<String, String> getProperties() {
             return properties;
         }
