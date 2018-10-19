@@ -8,7 +8,7 @@
     <name>echo-client-tomcat</name>
 
     <properties>
-        <spring.version>4.1.1.RELEASE</spring.version>
+        <spring.version>4.3.20.RELEASE</spring.version>
     </properties>
 
     <dependencies>
